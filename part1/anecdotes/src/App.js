@@ -6,6 +6,39 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 
+const NoVotes = () => {
+  return (
+    <>
+    <p>No popular anecdotes so far...</p>
+  </>
+  )
+}
+
+const MostPopular = ({anecdotes, mostPopular, mostVotes}) => {
+  return (
+    <>
+    <h2>Anecdote with most votes</h2>
+    <p>{anecdotes[mostPopular]}</p>
+    <p>has {mostVotes} votes</p>
+  </>
+  )
+}
+
+const PopularAnecdote = ( {mostVotes, anecdotes, mostPopular}) => {
+  if (mostVotes > 0) {
+    return (
+    <>
+      <MostPopular anecdotes={anecdotes} mostPopular={mostPopular} mostVotes={mostVotes}/>
+    </>
+    )
+  }
+  return (
+  <>
+    <NoVotes/>
+  </>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -17,9 +50,13 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.'
   ]
   const arr = Array(anecdotes.length).fill(0)
+
   const [selected, setSelected] = useState(0)
   const [score, setScore] = useState(arr)
+  
+  let mostVotes = Math.max(...score)
 
+  let mostPopular = score.indexOf(mostVotes)
   const handleClick = () => {
     setSelected(Math.floor(Math.random() * anecdotes.length))
   }
@@ -32,10 +69,12 @@ const App = () => {
 
   return (
     <>
-    <p>{anecdotes[selected]}</p>
-    <p>has {score[selected]} votes</p>
-    <Button handleClick={handleVotes} text="vote" />
-    <Button handleClick={handleClick} text="next anecdote" />
+    <h2>Anecdote of the day</h2>
+      <p>{anecdotes[selected]}</p>
+      <p>has {score[selected]} votes</p>
+      <Button handleClick={handleVotes} text="vote" />
+      <Button handleClick={handleClick} text="next anecdote" />
+      <PopularAnecdote mostVotes={mostVotes} anecdotes={anecdotes} mostPopular={mostPopular}/>
     </>
   )
 }
