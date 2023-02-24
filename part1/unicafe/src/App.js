@@ -35,7 +35,6 @@ const App = () => {
   const [total, setTotal] = useState(0)
   const [positive, setPositive] = useState(0)
 
-
   const handleGood = () => {
     console.log("Good")
     setGood(good + 1)
