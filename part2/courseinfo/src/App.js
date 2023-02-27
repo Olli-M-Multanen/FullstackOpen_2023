@@ -1,44 +1,4 @@
-// import Header from './components/Header'
-// import Part from './components/Part'
-
-
-const Header = ({ course }) => {
-  return (
-    <>
-    <h2>{course.name}</h2>
-    </>
-  )
-}
-
-const Part = ({ course }) => {
-  const totalSum = course.parts.reduce((sum, {exercises}) => sum + exercises, 0)
-  return (
-    <>
-    {course.parts.map((part, index) => {
-      return (
-      <div key={index}>
-        <p> {part.name} {part.exercises}</p>
-      </div>
-      )
-    })}
-    <p><b>total of {totalSum} exercises</b></p>
-    </>
-  )
-}
-
-const Courses = ({ courses }) => {
-  return (
-    <>
-    <h1>Web development curriculum</h1>
-      {courses.map(course =>
-        <div key={course.id}>
-          <Header key={course.name} course={course} />
-          <Part key={course.id} course={course} />
-        </div>
-      )}
-    </>
-  )
-}
+import Course from './components/Course'
 
 const App = ({}) => {
   const courses = [
@@ -85,7 +45,7 @@ const App = ({}) => {
     ]
   }
 ]
-  return <Courses courses={courses} />
+  return <Course courses={courses} />
 }
 
 export default App;

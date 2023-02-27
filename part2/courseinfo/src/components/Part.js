@@ -1,11 +1,21 @@
 import React from 'react'
 
-const Part = ({ part }) => {
+const Part = ({ course }) => {
+    const totalSum = course.parts.reduce((sum, {exercises}) => sum + exercises, 0)
     return (
       <>
-      <h2>{part.name}</h2>
+      {course.parts.map((part, index) => {
+        return (
+        <div key={index}>
+          <p> {part.name} {part.exercises}</p>
+        </div>
+        )
+      })}
+      <p><b>total of {totalSum} exercises</b></p>
       </>
     )
   }
+
+
 
   export default Part
