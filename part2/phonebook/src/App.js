@@ -1,8 +1,84 @@
 import { useState } from 'react'
 
+const Filter = ({nameFilter, handleFilterChange}) => {
+  return (
+    <>
+    filter shown with
+      <input 
+      value={nameFilter}
+      onChange={handleFilterChange}></input>
+    </>
+  )
+}
+
+const AddContact = ({addPerson, newName, handleNameChange, newNumber, handleNumberChange}) => {
+  return (
+    <>
+    <h2>add a new</h2>
+      <form onSubmit={addPerson}>
+        <div>
+          name:
+          <input 
+          value={newName} 
+          onChange={handleNameChange}
+          />
+        </div>
+        <div>
+          number:
+          <input value={newNumber} 
+          onChange={handleNumberChange}
+          />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+    </>
+  )
+}
+
 const Person = ({ person }) => {
   return (
+    <>
     <p>{person.name} {person.number}</p>
+    </>
+  )
+}
+
+const AllNumbers = ({persons}) => {
+  return (
+    <>
+    <h2>Numbers</h2>
+      {persons.map(person =>
+        <Person key={person.name} person={person}/>
+        )}
+    </>    
+  )
+}
+
+const FilteredNumbers = ({persons, nameFilter}) => {
+  return (
+    <>
+    <h2>Numbers</h2>
+      {persons.filter(person =>
+        person.name.toLocaleLowerCase().includes(nameFilter.toLocaleLowerCase())).map(filteredName => (
+          <Person key={filteredName.name} person={filteredName} />
+    ))}
+    </>
+  )
+}
+
+const ContactBook = ({nameFilter, persons}) => {
+  if (nameFilter) {
+    return (
+      <>
+      <FilteredNumbers persons={persons} nameFilter={nameFilter}/>
+      </>
+    )
+  } return (
+    <>
+    <AllNumbers persons={persons}/>
+    </>
   )
 }
 
@@ -15,6 +91,7 @@ const App = () => {
   ) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [nameFilter, setNameFilter] = useState('')
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -28,6 +105,10 @@ const App = () => {
   }
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
+  }
+
+  const handleFilterChange = (event) => {
+    setNameFilter(event.target.value)
   }
 
   function contactExists (name, number) {
@@ -52,29 +133,9 @@ const App = () => {
   return (
     <>
     <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name:
-          <input value={newName} 
-          onChange={handleNameChange}
-          />
-        </div>
-        <div>
-          number:
-          <input value={newNumber} 
-          onChange={handleNumberChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <div>
-        {persons.map(person =>
-          <Person key={person.name} person={person}/>
-          )}
-      </div>
+    <Filter nameFilter={nameFilter} handleFilterChange={handleFilterChange} />
+    <AddContact addPerson={addPerson}newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
+    <ContactBook nameFilter={nameFilter} persons={persons}/>
     </>
   )
 }
