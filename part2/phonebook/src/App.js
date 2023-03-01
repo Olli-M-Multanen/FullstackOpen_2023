@@ -1,86 +1,7 @@
-import { useState } from 'react'
-
-const Filter = ({nameFilter, handleFilterChange}) => {
-  return (
-    <>
-    filter shown with
-      <input 
-      value={nameFilter}
-      onChange={handleFilterChange}></input>
-    </>
-  )
-}
-
-const AddContact = ({addPerson, newName, handleNameChange, newNumber, handleNumberChange}) => {
-  return (
-    <>
-    <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name:
-          <input 
-          value={newName} 
-          onChange={handleNameChange}
-          />
-        </div>
-        <div>
-          number:
-          <input value={newNumber} 
-          onChange={handleNumberChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-    </>
-  )
-}
-
-const Person = ({ person }) => {
-  return (
-    <>
-    <p>{person.name} {person.number}</p>
-    </>
-  )
-}
-
-const AllNumbers = ({persons}) => {
-  return (
-    <>
-    <h2>Numbers</h2>
-      {persons.map(person =>
-        <Person key={person.name} person={person}/>
-        )}
-    </>    
-  )
-}
-
-const FilteredNumbers = ({persons, nameFilter}) => {
-  return (
-    <>
-    <h2>Numbers</h2>
-      {persons.filter(person =>
-        person.name.toLocaleLowerCase().includes(nameFilter.toLocaleLowerCase())).map(filteredName => (
-          <Person key={filteredName.name} person={filteredName} />
-    ))}
-    </>
-  )
-}
-
-const ContactBook = ({nameFilter, persons}) => {
-  if (nameFilter) {
-    return (
-      <>
-      <FilteredNumbers persons={persons} nameFilter={nameFilter}/>
-      </>
-    )
-  } return (
-    <>
-    <AllNumbers persons={persons}/>
-    </>
-  )
-}
+import { useState} from 'react'
+import Filter from './components/Filter'
+import AddContact from './components/AddContact'
+import ContactBook from './components/ContactBook'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -110,15 +31,18 @@ const App = () => {
   const handleFilterChange = (event) => {
     setNameFilter(event.target.value)
   }
-
+  // Before adding to array, check if name exists
   function contactExists (name, number) {
+    // every word in a string to UpperCase
     name = name.toLowerCase()
     .split(' ')
     .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
     .join(' ');
+    // filter array, if string found, alert
     if (persons.filter(e => e.name === name).length >0 ) {
       alert(`${name} is already added to phonebook`)
     } else {
+      // If not found, add object to array
       const personObject = {
         name: name,
         number: number,
