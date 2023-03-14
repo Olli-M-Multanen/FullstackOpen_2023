@@ -1,8 +1,9 @@
 import { useState, useEffect} from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import AddContact from './components/AddContact'
 import ContactBook from './components/ContactBook'
+
+import peopleService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -12,14 +13,11 @@ const App = () => {
   const [nameFilter, setNameFilter] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    peopleService
+      .getAll()
+      .then(initialContacts => {
+        setPersons(initialContacts)
       })
-      console.log('render', persons.length, 'persons')
   }, [])
 
 
@@ -56,12 +54,10 @@ const App = () => {
         name: name,
         number: number,
       }
-      axios
-        .post('http://localhost:3001/persons', personObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
-          setNewName('')
-          setNewNumber('')          
+      peopleService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
         })
     }
   }
