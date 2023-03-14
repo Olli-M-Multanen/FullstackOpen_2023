@@ -5,7 +5,7 @@ import AddContact from './components/AddContact'
 import ContactBook from './components/ContactBook'
 
 const App = () => {
-  const [persons, setPersons] = useState([]) 
+  const [persons, setPersons] = useState([])
 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
@@ -19,8 +19,9 @@ const App = () => {
         console.log('promise fulfilled')
         setPersons(response.data)
       })
+      console.log('render', persons.length, 'persons')
   }, [])
-  console.log('render', persons.length, 'persons')
+
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -54,11 +55,14 @@ const App = () => {
       const personObject = {
         name: name,
         number: number,
-        id: persons.length +1
       }
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+      axios
+        .post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          setNewNumber('')          
+        })
     }
   }
 
