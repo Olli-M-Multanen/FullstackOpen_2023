@@ -40,6 +40,7 @@ const App = () => {
   const handleDelete = (event) => {
     const id = event.target.value
     const contactName = event.target.getAttribute("data-contact-name")
+
     if (window.confirm(`Delete contact ${contactName}?`)) {
       peopleService
       .deleteContact(id)
@@ -48,6 +49,7 @@ const App = () => {
       })
     }
   }
+
 
   // Before adding to array, check if name exists
   function contactExists (name, number) {
@@ -58,7 +60,17 @@ const App = () => {
     .join(' ');
     // filter array, if string found, alert
     if (persons.filter(e => e.name === name).length >0 ) {
-      alert(`${name} is already added to phonebook`)
+
+      const contact = persons.find(c => c.name === name)
+      // if name already exists, ask to update phone number
+      if (window.confirm(`${contact.name} is already added to phonebook, replace the old number with a new one ?`)) {
+        const changedContact = { ...contact, number: number}
+        peopleService
+          .update(contact.id, changedContact)
+          .then(returnedContact => {
+            setPersons(persons.map(person => person.id !== contact.id ? person : returnedContact))
+          }) 
+      }
     } else {
       // If not found, add object to array
       const personObject = {
@@ -71,7 +83,7 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
         })
     }
-  }
+  } 
 
   return (
     <>
