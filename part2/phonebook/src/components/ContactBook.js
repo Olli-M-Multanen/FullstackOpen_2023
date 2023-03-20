@@ -1,13 +1,17 @@
 import React from 'react'
 import Person from './Person'
 
-const AllNumbers = ({persons}) => {
+const AllNumbers = ({persons, handleDelete}) => {
     return (
       <>
       <h2>Numbers</h2>
-        {persons.map(person =>
-          <Person key={person.name} person={person}/>
+      <table>
+      <thead>
+      {persons.map(person =>
+          <Person key={person.name} person={person} handleDelete={handleDelete} />
           )}
+        </thead>
+      </table>
       </>    
     )
   }
@@ -16,15 +20,19 @@ const FilteredNumbers = ({persons, nameFilter}) => {
     return (
       <>
       <h2>Numbers</h2>
+      <table>
+        <thead>
         {persons.filter(person =>
           person.name.toLocaleLowerCase().includes(nameFilter.toLocaleLowerCase())).map(filteredName => (
             <Person key={filteredName.name} person={filteredName} />
       ))}
+        </thead>
+      </table>
       </>
     )
   }
   
-const ContactBook = ({nameFilter, persons}) => {
+const ContactBook = ({nameFilter, persons, handleDelete}) => {
     if (nameFilter) {
       return (
         <>
@@ -33,7 +41,7 @@ const ContactBook = ({nameFilter, persons}) => {
       )
     } return (
       <>
-      <AllNumbers persons={persons}/>
+      <AllNumbers persons={persons} handleDelete={handleDelete}/>
       </>
     )
   }

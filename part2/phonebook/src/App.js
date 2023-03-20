@@ -20,7 +20,6 @@ const App = () => {
       })
   }, [])
 
-
   const addPerson = (event) => {
     event.preventDefault()
     contactExists(newName, newNumber)
@@ -38,6 +37,18 @@ const App = () => {
   const handleFilterChange = (event) => {
     setNameFilter(event.target.value)
   }
+  const handleDelete = (event) => {
+    const id = event.target.value
+    const contactName = event.target.getAttribute("data-contact-name")
+    if (window.confirm(`Delete contact ${contactName}?`)) {
+      peopleService
+      .deleteContact(id)
+      .then(response => {
+        setPersons(persons.filter(contact => contact.id != id))
+      })
+    }
+  }
+
   // Before adding to array, check if name exists
   function contactExists (name, number) {
     // every word in a string to UpperCase
@@ -66,8 +77,8 @@ const App = () => {
     <>
     <h2>Phonebook</h2>
     <Filter nameFilter={nameFilter} handleFilterChange={handleFilterChange} />
-    <AddContact addPerson={addPerson}newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
-    <ContactBook nameFilter={nameFilter} persons={persons}/>
+    <AddContact addPerson={addPerson}newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
+    <ContactBook nameFilter={nameFilter} persons={persons} handleDelete={handleDelete}/>
     </>
   )
 }
