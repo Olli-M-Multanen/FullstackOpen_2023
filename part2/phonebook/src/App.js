@@ -2,6 +2,7 @@ import { useState, useEffect} from 'react'
 import Filter from './components/Filter'
 import AddContact from './components/AddContact'
 import ContactBook from './components/ContactBook'
+import Notification from './components/Notification'
 
 import peopleService from './services/persons'
 
@@ -11,6 +12,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+  const [notificationMessage, setNotificationMessage] = useState('')
 
   useEffect(() => {
     peopleService
@@ -83,11 +85,16 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
         })
     }
+    setNotificationMessage(`${name} added succesfully!`)
+    setTimeout(() => {
+      setNotificationMessage(null)
+    }, 4000)
   } 
 
   return (
     <>
     <h2>Phonebook</h2>
+    <Notification message={notificationMessage} /> 
     <Filter nameFilter={nameFilter} handleFilterChange={handleFilterChange} />
     <AddContact addPerson={addPerson}newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
     <ContactBook nameFilter={nameFilter} persons={persons} handleDelete={handleDelete}/>
