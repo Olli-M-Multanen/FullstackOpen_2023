@@ -13,6 +13,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
   const [notificationMessage, setNotificationMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState(false)
 
   useEffect(() => {
     peopleService
@@ -47,7 +48,7 @@ const App = () => {
       peopleService
       .deleteContact(id)
       .then(response => {
-        setPersons(persons.filter(contact => contact.id != id))
+        setPersons(persons.filter(contact => contact.id !== id))
       })
     }
   }
@@ -71,6 +72,17 @@ const App = () => {
           .update(contact.id, changedContact)
           .then(returnedContact => {
             setPersons(persons.map(person => person.id !== contact.id ? person : returnedContact))
+          })
+          // handle error, incase contact has already been deleted from server
+          .catch(error => {
+            setErrorMessage(true)
+            setNotificationMessage(`${contact.name} was already removed from server`)
+            setTimeout(() => {
+              setErrorMessage(false)
+              setNotificationMessage(null)
+            }, 4000)
+            // update user page, requested contact from users page
+            setPersons(persons.filter(removed => removed.name !== contact.name))
           }) 
       }
     } else {
@@ -94,7 +106,7 @@ const App = () => {
   return (
     <>
     <h2>Phonebook</h2>
-    <Notification message={notificationMessage} /> 
+    <Notification message={notificationMessage} errorMessage={errorMessage}/> 
     <Filter nameFilter={nameFilter} handleFilterChange={handleFilterChange} />
     <AddContact addPerson={addPerson}newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
     <ContactBook nameFilter={nameFilter} persons={persons} handleDelete={handleDelete}/>
