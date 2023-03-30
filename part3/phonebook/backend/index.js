@@ -77,6 +77,14 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
+    const contact = persons.find(c => c.name.toLocaleLowerCase() === body.name.toLocaleLowerCase())
+    if (contact) {
+        return response.status(400).json({
+            error: 'name already exists'
+        })
+    }
+
+
     const person = {
         id: generateId(1, 10000),
         name: body.name,
