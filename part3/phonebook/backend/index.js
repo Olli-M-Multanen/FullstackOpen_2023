@@ -1,9 +1,12 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
+app.use(express.static('build'))
 
 morgan.token('body', (req, res) => JSON.stringify(req.body))
 
@@ -30,6 +33,11 @@ let persons = [
           "id": 4,
           "name": "Mary Poppendieck", 
           "number": "39-23-6423122"
+        },
+        { 
+          "id": 5,
+          "name": "Richard Cowey", 
+          "number": "39-23-6493845"
         }
     ]
 
@@ -59,54 +67,47 @@ app.get('/api/persons/:id', (request, response) => {
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     persons = persons.filter(person => person.id !== id)
-    response.status(204).end()
-  })
+    response
+      .status(204)
+      .end()
+})
 
-const generateId = (min, max) => {
-    min = Math.ceil(min)
-    max = Math.floor(max)
-
-    const newId = Math.floor(Math.random() * (max - min) + min)
-    return newId
-}
 
 app.post('/api/persons', (request, response) => {
+
     const body = request.body
+    const contact = persons.find(c => c.name.toLocaleLowerCase() === body.name.toLocaleLowerCase())
 
     if (!body.name) {
         return response.status(400).json({
             error: 'name missing'
         })
-    }
-    
-    if (!body.number) {
+    } else if (!body.number) {
         return response.status(400).json({
             error: 'number missing'
         })
-    }
-
-    const contact = persons.find(c => c.name.toLocaleLowerCase() === body.name.toLocaleLowerCase())
-    if (contact) {
-        return response.status(400).json({
-            error: 'name already exists'
-        })
-    }
-
-
-    const person = {
-        id: generateId(1, 10000),
+    } else if (contact) {
+        return response
+        .status(400)
+        .json({ error: 'name already exists'})
+    } else {
+      const person = {
+        id: body.id,
         name: body.name,
         number: body.number,
     }
-
     persons = persons.concat(person)
+    response
+    .status(200)
+    .json(persons)
+    }
 })
 
 app.get('/info', (request, response) => {
     response.send(`<p>Phonebook has infor for ${counter} people</p> <p>${timeNow}</p>`)
   })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
